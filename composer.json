@@ -1,0 +1,20 @@
+{
+    "name": "unbank/magicpay",
+    "description": "MagicPay API endpoints to easily and securely charge and credit transactions.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "MagicPay\\API\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Oshane Bailey",
+            "email": "b4.oshany@gmail.com"
+        }
+    ],
+    "minimum-stability": "beta",
+    "require": {}
+
+}
