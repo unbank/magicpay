@@ -44,12 +44,13 @@ class Charge
         return $this->verify_url;
     }
 
-    public function charge(string $name, string $expiry_month, string $expiry_year, $cvv2='', array $data=[]) {
+    public function charge(float $amount, string $name, string $card_number, int $expiry_month, int $expiry_year, string $cvv2='', array $data=[]) {
         $data['name'] = $name;
         $data['expiry_month'] = $expiry_month;
         $data['expiry_year'] = $expiry_year;
         $data['cvv2'] = $cvv2;
-        $data['save_card'] = true;
+        $data['card'] = $card_number;
+        $data['amount'] = $amount;
         AppHelper::setArrayDefault($data, 'software', 'Unbank Web');
         return $this->submitRequest($this->charge_url, $data);
     }
