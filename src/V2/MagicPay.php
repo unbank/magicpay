@@ -51,6 +51,14 @@ class MagicPay {
         return $this->services['charge'] = new Charge($endpoint);
     }
 
+    public function transactions() {
+        if ( !empty($this->services['transaction'])) {
+            return $this->services['transaction'];
+        }
+        $endpoint = $this;
+        return $this->services['transaction'] = new Transaction($endpoint);
+    }
+
 }
 
 ?>

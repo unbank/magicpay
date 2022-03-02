@@ -51,7 +51,6 @@ class Charge
         $data['cvv2'] = $cvv2;
         $data['card'] = $card_number;
         $data['amount'] = $amount;
-        AppHelper::setArrayDefault($data, 'software', 'Unbank Web');
         return $this->submitRequest($this->charge_url, $data);
     }
 
