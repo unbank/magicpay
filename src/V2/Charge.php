@@ -54,24 +54,35 @@ class Charge
         return $this->submitRequest($this->charge_url, $data);
     }
 
-    public function verify(string $name, string $card_number, string $expiry_month, string $expiry_year, $cvv2='', $save_card=true, $capture=true) {
-        $ip = AppHelper::clientIP();
-        $data = '{
-            "amount": 2.00,
-            "name": "'. $name .'",
-            "transaction_details": {
-                "description": "Card Verification",
-                "client_ip": "'.$ip.'"
-            },
-            "software": "Unbank App",
-            "expiry_month": '.$expiry_month.',
-            "expiry_year": '.$expiry_year.',
-            "cvv2": "'.$cvv2.'",
-            "card": "'.$card_number.'",
-            "capture": '. (( $capture )? 'true' : 'false')  .',
-            "save_card": '. (( $save_card )? 'true' : 'false')  .'
+    public function verify(string $name, string $card_number, string $expiry_month, string $expiry_year, $cvv2='', $save_card=true, $capture=true, $data=[]) {
+
+        $data['name'] = $name;
+        $data['expiry_month'] = $expiry_month;
+        $data['expiry_year'] = $expiry_year;
+        $data['cvv2'] = $cvv2;
+        $data['card'] = $card_number;
+        $data['amount'] = number_format( random_int(1, 200) / 100, 2);
+        $data['capture'] = ( $capture )? 'true' : 'false';
+        $data['save_card'] = ( $save_card )? 'true' : 'false';
+
+        if ( empty($data["transaction_details"]) ) {
+            try {
+                if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                    $ip = $_SERVER['HTTP_CLIENT_IP'];
+                } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                } elseif( !empty($_SERVER['REMOTE_ADDR'])) {
+                    $ip = $_SERVER['REMOTE_ADDR'];
+                }
+                $ip = "0.0.0.0";
+            } catch (\Throwable $th) {
+                logger($th->getMessage());
+            }
+            $data["transaction_details"] = [
+                "description" => "Card Verification",
+                "client_ip" => $ip
+            ];
         }
-        ';
         return $this->submitRequest($this->verify_url, $data);
     }
 
