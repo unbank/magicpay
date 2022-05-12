@@ -54,16 +54,24 @@ class Charge
         return $this->submitRequest($this->charge_url, $data);
     }
 
-    public function verify(string $name, string $card_number, string $expiry_month, string $expiry_year, $cvv2='', $save_card=true, $capture=true, $data=[]) {
-
+    public function verify(
+        string $name,
+        string $card_number,
+        int $expiry_month,
+        int $expiry_year,
+        string $cvv2='',
+        bool $save_card=true,
+        bool $capture=true,
+        array $data=[]
+    ) {
         $data['name'] = $name;
         $data['expiry_month'] = $expiry_month;
         $data['expiry_year'] = $expiry_year;
         $data['cvv2'] = $cvv2;
         $data['card'] = $card_number;
         $data['amount'] = number_format( random_int(1, 200) / 100, 2);
-        $data['capture'] = ( $capture )? 'true' : 'false';
-        $data['save_card'] = ( $save_card )? 'true' : 'false';
+        $data['capture'] = $capture;
+        $data['save_card'] = $save_card;
 
         if ( empty($data["transaction_details"]) ) {
             try {
