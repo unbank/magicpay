@@ -2,7 +2,6 @@
 
 namespace MagicPay\API\V2;
 
-use App\Helpers\AppHelper;
 use MagicPay\API\Traits\Request;
 
 /**

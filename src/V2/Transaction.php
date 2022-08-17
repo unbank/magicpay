@@ -2,7 +2,6 @@
 
 namespace MagicPay\API\V2;
 
-use App\Helpers\AppHelper;
 use MagicPay\API\Traits\Request;
 
 /**
@@ -41,9 +40,8 @@ class Transaction
      * @return array
      */
     public function query(array $params=[]) {
-        $query_str = http_build_query($params);
-        $url = ($this->endpoint->url())."/transactions?$query_str";
-        return $this->getRequest($url);
+        $url = ($this->endpoint->url())."/transactions";
+        return $this->getRequest($url, $params);
     }
 
 
