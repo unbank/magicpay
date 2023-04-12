@@ -17,30 +17,49 @@ trait Request {
      * @return mixed            Returns Mitek JSON repsonse as an array.
      */
     protected function submitRequest($url, $postData, $method="POST") {
+        $httpClass = '\Illuminate\Support\Facades\Http';
+        if ( ! class_exists($httpClass) ) {
+            return $this->psr7Request($url, $postData, $method);
+        }
+
+        $response = $httpClass::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Basic '.$this->endpoint->getToken()
+        ])->send($method, $url, [
+            'json' => $postData,
+        ]);
+        return $response->json();
+    }
+
+
+
+
+    /**
+     * Send Post API request
+     *
+     * @uses Mitek::auth        Get the authentication token from the response.
+     * @param string $url       API Endpoint
+     * @param mixed $postData  HTTP Post Data
+     * @return mixed            Returns Mitek JSON repsonse as an array.
+     */
+    protected function psr7Request($url, $postData, $method="POST") {
 
         if ( is_array($postData) ) {
             $postData = json_encode($postData);
         }
 
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-          CURLOPT_URL => $url,
-          CURLOPT_RETURNTRANSFER => true,
-          CURLOPT_ENCODING => '',
-          CURLOPT_MAXREDIRS => 10,
-          CURLOPT_TIMEOUT => 0,
-          CURLOPT_FOLLOWLOCATION => true,
-          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-          CURLOPT_CUSTOMREQUEST => $method,
-          CURLOPT_POSTFIELDS =>$postData,
-          CURLOPT_HTTPHEADER => array(
-            'Content-Type: application/json',
-            'Authorization: Basic '.$this->endpoint->getToken()
-          ),
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        return json_decode($response, true);
+        $client = new Client();
+        $headers = array_merge([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Basic '.$this->endpoint->getToken()
+        ]);
+        $request = new Psr7Request($method, $url, $headers, $postData);
+        $res = $client->sendAsync($request)->wait();
+        $content = $res->getBody()->getContents();
+        if ( empty($content) ) {
+            return [];
+        }
+        return json_decode($content, true);
     }
 
 

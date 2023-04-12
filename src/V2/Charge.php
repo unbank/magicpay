@@ -80,8 +80,9 @@ class Charge
                     $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
                 } elseif( !empty($_SERVER['REMOTE_ADDR'])) {
                     $ip = $_SERVER['REMOTE_ADDR'];
+                } else {
+                    $ip = "0.0.0.0";
                 }
-                $ip = "0.0.0.0";
             } catch (\Throwable $th) {
                 logger($th->getMessage());
             }
